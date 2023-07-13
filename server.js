@@ -6,8 +6,8 @@ const http = require('http'),
 fs = require('fs'),
 url = require('url');
 
-http.createServer((req, res) => {
-    let addr = req.url,
+http.createServer((require, respond) => {
+    let addr = require.url,
     q = url.parse(addr,true);
     filePath = '';
 
@@ -31,9 +31,9 @@ http.createServer((req, res) => {
         }
         console.log('File content: ' + data.toString())
     
-    res.writeHead(200, { 'Content-Type': 'text/html' });//adds a header to the response it sends back
-    res.write(data);
-    return res.end('Hello Node!\n');
+    respond.writeHead(200, { 'Content-Type': 'text/html' });//adds a header to the response it sends back
+    respond.write(data);
+    respond.end('Hello Node!\n');
 });//ends the response and sends back the message
 }).listen(8080);//listens for a response on port 8080. it is the standard port for http. any number can 
 //be used as long as it is > 1024
