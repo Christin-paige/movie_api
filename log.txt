@@ -4,3 +4,5 @@ Timestamp: Thu Jul 13 2023 17:01:17 GMT-0400 (Eastern Daylight Time)
 URL: /favicon.ico
 Timestamp: Thu Jul 13 2023 17:01:17 GMT-0400 (Eastern Daylight Time)
 
+::1 - - [21/Jul/2023:12:34:01 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+::1 - - [21/Jul/2023:12:34:21 +0000] "GET /documentation HTTP/1.1" 304 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
