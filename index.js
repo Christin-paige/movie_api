@@ -1,5 +1,5 @@
-const express = require('express');
-morgan = require('morgan');
+const express = require('express'),
+morgan = require('morgan'),
 fs = require('fs'),
 path = require('path');
 
@@ -24,6 +24,13 @@ app.get('/', (req, res) => {
   app.get('/movies', (req, res) => {
     res.json(topTenMovies);
   });
+
+
+    app.use((err, req, res, next) => {
+        console.error(err.stack);
+        res.status(500).send('Something broke!');
+   
+    });
 
   app.listen(8080, () => {
     console.log('Your app is listening on port 8080.');
