@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentation</title>
 </head>
+<style>
+    table, th, td {
+      border:1px solid black;
+    }
+    </style>
 <body>
     <h1>MyFlix</h1>
     <p>MyFlix is a web application that will provide users with a database of
@@ -19,5 +24,66 @@
         Node.js, Express, and MongoDB.  The application will be hosted online and will
         be responsive for all users on all devices.
     </p>
+
+    <table style = "width: 100%">
+        <tr>
+            <th>Request</th>
+            <th>URL</th>
+            <th>HTTP Method</th>
+            <th>Request Data Format</th>
+            <th>Response Data Body Format</th>
+        </tr>
+        <tr>
+            <td>Get a list of movies</td>
+            <td>/movies</td>
+            <td>GET</td>
+            <td>None</td>
+            <td>A JSON object holding data about the movies</td>
+        </tr>
+        <tr>
+            <td>Get data about a single movie</td>
+            <td>/movies/[Title]</td>
+            <td>GET</td>
+            <td>None</td>
+            <td>JSON object holding data about a single movie containing
+                title, genre, and director.</td>
+        </tr>
+        <tr>
+            <td>Add new users</td>
+            <td>/users</td>
+            <td>POST</td>
+            <td>A JSON object holding data about the user to add</td>
+            <td>A JSON object holding data was added</td>
+        </tr>
+        <tr>
+            <td>Update user info</td>
+            <td>/users/[Name]</td>
+            <td>PUT</td>
+            <td>None</td>
+            <td>A text message indicating the new user info</td>
+        </tr>
+        <tr>
+            <td>User adds a movie to list of favorites</td>
+            <td>/users/[Name]/movies</td>
+            <td>PUT</td>
+            <td>None</td>
+            <td>A text message indicating the movie was added to user's list</td>
+        </tr>
+        <tr>
+            <td>Remove a movie from user list</td>
+            <td>/users/[Name]/movies</td>
+            <td>DELETE</td>
+            <td>None</td>
+            <td>A text message indicating movie was removed from list</td>
+        </tr>
+        <tr>
+            <td>User deregisters</td>
+            <td>/user/[Name]</td>
+            <td>Delete</td>
+            <td>None</td>
+            <td>A text message indicating the user has succesfully deregisgtered</td>
+        </tr>
+
+    </table>
 </body>
 </html>
