@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,9 +16,11 @@
     "express": "^4.18.2",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
-    "save": "^2.9.0"
+    "save": "^2.9.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.44.0"
+    "eslint": "^8.44.0",
+    "nodemon": "^3.0.1"
   }
 }

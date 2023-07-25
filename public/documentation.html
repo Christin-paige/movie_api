@@ -48,29 +48,36 @@
         </tr>
         <tr>
             <td>Get data about a single movie</td>
-            <td>/movies/[Title]</td>
+            <td>/movies/[title]</td>
             <td>GET</td>
             <td>None</td>
             <td>JSON object holding data about a single movie containing
                 title, genre, and director. <br>Example:
                 { <br>
                     title: 'The Godfather',<br>
-                    genre: ['Crime', 'Drama'],<br>
-                    director: 'Francis Ford Coppola'<br>
-                    image URL: <br>
+                    Genre: ['Crime', 'Drama'],<br>
+                    Director: 'Francis Ford Coppola'<br>
                 }
             </td>
             <tr>
+                <td>Return data about a genre</td>
+                <td>/movies/[genre]</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>JSON object holding data about the genre will be returned</td>
+            </tr>
+            <tr>
             <td>Information about the director of a single movie</td>
-            <td>/movies/[Title]/[director]</td>
+            <td>/movies/director/[director]</td>
             <td>GET</td>
             <td>None</td>
             <td>JSON object holding data about the director of a single movie.  <br>
             Example: 
             { <br> 
-                bio: 'Information about Francis Ford Coppola'<br>
+                name: Francis Ford Coppola<br>
+                bio: 'An American director born in Detroit, Michigan'<br>
                 birth year: 1939<br>
-                death year: 'N/A'<br>
+                
             }
 
             </td>
@@ -81,33 +88,41 @@
             <td>/users</td>
             <td>POST</td>
             <td>A JSON object holding data about the user to add</td>
-            <td>A JSON object holding data was added</td>
+            <td>A JSON object holding data was added<br>
+            Example: <br>
+        {<br>
+        id: 1 <br>
+        name: Elliott Frey <br>
+        favoriteMovies: 'Harry Potter and the Sorcerer's Stone' <br>
+        }
+    </td>
+            
         </tr>
         <tr>
             <td>Update user info</td>
-            <td>/users/[Name]</td>
+            <td>/users/[id]</td>
             <td>PUT</td>
             <td>None</td>
             <td>A text message indicating the new user info</td>
         </tr>
         <tr>
             <td>User adds a movie to list of favorites</td>
-            <td>/users/[Name]/movies</td>
+            <td>/users/[id]/movie</td>
             <td>PUT</td>
             <td>None</td>
             <td>A text message indicating the movie was added to user's list</td>
         </tr>
         <tr>
             <td>Remove a movie from user list</td>
-            <td>/users/[Name]/movies</td>
+            <td>/users/[id]/[title]</td>
             <td>DELETE</td>
             <td>None</td>
             <td>A text message indicating movie was removed from list</td>
         </tr>
         <tr>
             <td>User deregisters</td>
-            <td>/user/[Name]</td>
-            <td>Delete</td>
+            <td>/user/[id]</td>
+            <td>DELETE</td>
             <td>None</td>
             <td>A text message indicating the user has succesfully deregisgtered</td>
         </tr>
