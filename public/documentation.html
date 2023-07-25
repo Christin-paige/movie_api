@@ -34,11 +34,17 @@
             <th>Response Data Body Format</th>
         </tr>
         <tr>
-            <td>Get a list of movies</td>
+            <td>Get a list of movie titles</td>
             <td>/movies</td>
             <td>GET</td>
             <td>None</td>
-            <td>A JSON object holding data about the movies</td>
+            <td>A JSON object holding data about the movies.<br>
+                Example:
+              
+                {
+                    title: 'The Godfather'
+                }
+            </td>
         </tr>
         <tr>
             <td>Get data about a single movie</td>
@@ -46,7 +52,29 @@
             <td>GET</td>
             <td>None</td>
             <td>JSON object holding data about a single movie containing
-                title, genre, and director.</td>
+                title, genre, and director. <br>Example:
+                { <br>
+                    title: 'The Godfather',<br>
+                    genre: ['Crime', 'Drama'],<br>
+                    director: 'Francis Ford Coppola'<br>
+                    image URL: <br>
+                }
+            </td>
+            <tr>
+            <td>Information about the director of a single movie</td>
+            <td>/movies/[Title]/[director]</td>
+            <td>GET</td>
+            <td>None</td>
+            <td>JSON object holding data about the director of a single movie.  <br>
+            Example: 
+            { <br> 
+                bio: 'Information about Francis Ford Coppola'<br>
+                birth year: 1939<br>
+                death year: 'N/A'<br>
+            }
+
+            </td>
+        </tr>
         </tr>
         <tr>
             <td>Add new users</td>
