@@ -3,6 +3,10 @@ morgan = require('morgan'),
 fs = require('fs'),
 path = require('path')
 app = express(),
+app.use(express.json()),
+app.use(express.urlencoded({
+  extended: true
+}))
 bodyParser = require('body-parser'),
 uuid = require('uuid');
 
@@ -20,92 +24,6 @@ mongoose.connect('mongodb://localhost:27017/[myflixdb]',
 
 app.use(bodyParser.json());
 
-let users = [
-  {
-    "id": 1,
-    "name": 'Elliott',
-    "favoriteMovies": ['Up'],
-  },
-  {
-    "id": 2,
-    "name": 'Harper',
-    "favoriteMovies": 'Ratatouille'
-  }
-
-]
-let movies = [
-  {
-    title: 'The Shawshank Redemption',
-    year: 1994,
-    director: {
-      'Name': 'Frank Darabont',
-      'Bio': 'Three-time Oscar Nominee born in a refugee camp',
-      'Birth': 'January 29th, 1959'
-  },
-    duration: '2h 22min',
-    genre: {
-      'Name': 'Crime' 
-  },
-    score: 9.3
-  },
-  {
-    title: 'The Godfather',
-    year: 1972,
-    director: {
-      'Name': 'Francis Ford Coppola',
-      'Bio': 'American film director born in Detroit, Michigan now living in California',
-      'Birth': 'April 7, 1939'
-  },
-    duration: '2h 55min',
-    genre: {
-      'Name': 'Drama' 
-  },
-    score: 9.2
-  },
-  {
-    title: 'The Godfather: Part II',
-    year: 1974,
-    director: {
-      'Name': 'Francis Ford Coppola',
-      'Bio': 'American film director born in Detroit, Michigan now living in California',
-      'Birth': 'April 7, 1939'
-  },
-    duration: '3h 22min',
-    genre: {
-      'Name': 'Crime' 
-  },
-    score: 9
-  },
-  {
-    title: 'The Dark Knight',
-    year: 2008,
-    director: {
-      'Name': 'Christopher Nolan',
-      'Bio': 'British and American filmmaker known for his Hollywood blockbusters with complex storytelling',
-      'Birth': 'July 30, 1970'
-  },
-    duration: '2h 32min',
-    genre: {
-      'Name': ['Thriller', 'Action'],
-  },
-    score: 9
-  },
-  {
-    title: '12 Angry Men',
-    year: 1957,
-    director: {
-      'Name': 'Sidney Lumet',
-      'Bio': 'American film director who first started his career in theatre before transitioning to film where he gained a reputation for making realistic and gritty New York dramas',
-      'Birth': 'June 25th, 1924'
-  },
-    duration: '1h 36min',
-    genre: {
-      'Name': 'Drama' 
-  },
-    score: 8.9
-  },
-
-]
 //CREATE
 app.post('/users', (req,res) => {
   const newUser = req.body;
@@ -256,3 +174,6 @@ app.get('/', (req, res) => {
   app.listen(8080, () => {
     console.log('Your app is listening on port 8080.');
   });
+
+  module.exports.Movie = Movie;
+  module.exports.User = User;
