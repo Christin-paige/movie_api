@@ -1,43 +1,121 @@
 const express = require('express'),
-morgan = require('morgan'),
-fs = require('fs'),
-path = require('path')
-app = express(),
-app.use(express.json()),
-app.use(express.urlencoded({
-  extended: true
-}))
 bodyParser = require('body-parser'),
 uuid = require('uuid');
 
+const morgan = require('morgan');
+const app = express();
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
+fs = require('fs'),
+path = require('path')
+app.use(express.json()),
+app.use(express.urlencoded({
+  extended: true
+}));
+
+
 const Movies = Models.Movie;
 const Users = Models.User;
+//const Genres = Models.Genre;
+//const Directors = Models.Director;
 
 mongoose.connect('mongodb://localhost:27017/[myflixdb]',
-{ useNewUrlParser: true, useUnifiedTopology: true});
-
-
-
+{ useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan("common"));
+
+// GET requests
+app.get('/', (req, res) => {
+  res.send('MyFlix: All of the Movies Worth Caring About');
+});
+
+app.get('/documentation', (req, res) => {                  
+  res.sendFile('public/documentation.html', { root: __dirname });
+});
+
+app.get('/movies', (req, res) => {
+  Movies.find()
+  .then((movies) => {
+    res.status(201).json(movies);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send("Error: " + err);
+  });
+});
+
+
+//Get all users
+app.get('/users', async (req, res) =>  {
+  await Users.find()
+  .then((users) => {
+    res.status(201).json(users);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
+});
+
+//Get JSON movie info when looking for a specific title
+app.get('/movies/:Title', (req, res) => {
+  Movies.findOne({ Title: req.params.Title })
+  .then ((movie) => {
+    res.json(movie);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
+});
 
 //CREATE
-app.post('/users', (req,res) => {
-  const newUser = req.body;
+app.post('/users', async (req, res) => {
+  await Users.findOne({Username: req.body.Username })
+  .then((user) => {
+    if (user) {
+      return res.status(400).send(req.body.Username + 'already exists');
+    } else {
+      Users
+      .create ({
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      })
+      .then((user) => {res.status(201).json(user) })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      })
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+    res.status(500).send('Error: ' + error);
+  })
+});
 
-  if (newUser.name) {
-    newUser.id = uuid.v4();
-    users.push(newUser);
-    res.status(201).json(newUser);
+//Get a user by name
+app.get('/users/:Username', async (req, res) => {
+  await Users.findOne({ Username: req.params.Username })
+  .then((user) => {
+    res.json(user);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
+});
 
-  }else{
-    res.status(400).send('user needs name')
-  }
-})
 
+
+
+
+/*
 //UPDATE
 app.put('/users/:id', (req,res) => {
   const { id } = req.params;
@@ -141,7 +219,7 @@ app.get('/movies/genre/:genreName', (req, res) => {
 
 });
 
-
+*/
 
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'),
@@ -151,29 +229,10 @@ app.use(morgan('common'));
 
 app.use(express.static('public'));
 
-// GET requests
-app.get('/', (req, res) => {
-    res.send('MyFlix: All of the Movies Worth Caring About');
-  });
-  
-  app.get('/documentation', (req, res) => {                  
-    res.sendFile('public/documentation.html', { root: __dirname });
-  });
-  
-  app.get('/movies', (req, res) => {
-    res.json(topTenMovies);
-  });
 
-
-    app.use((err, req, res, next) => {
-        console.error(err.stack);
-        res.status(500).send('Something broke!');
-   
-    });
 
   app.listen(8080, () => {
     console.log('Your app is listening on port 8080.');
   });
 
-  module.exports.Movie = Movie;
-  module.exports.User = User;
+  
