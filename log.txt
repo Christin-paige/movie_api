@@ -130,3 +130,5 @@ Timestamp: Thu Jul 13 2023 17:01:17 GMT-0400 (Eastern Daylight Time)
 ::1 - - [01/Aug/2023:12:19:08 +0000] "GET /favicon.ico HTTP/1.1" 404 150 "http://localhost:8000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
 ::1 - - [01/Aug/2023:12:40:15 +0000] "GET /favicon.ico HTTP/1.1" 404 150 "http://localhost:8000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
 ::1 - - [01/Aug/2023:12:41:48 +0000] "GET /favicon.ico HTTP/1.1" 404 150 "http://localhost:8080/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+::1 - - [05/Aug/2023:01:36:06 +0000] "GET /users.Name HTTP/1.1" 404 149 "-" "PostmanRuntime/7.32.3"
+::1 - - [05/Aug/2023:01:58:36 +0000] "POST /movies HTTP/1.1" 404 146 "-" "PostmanRuntime/7.32.3"
