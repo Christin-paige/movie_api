@@ -5,11 +5,11 @@ let movieSchema = mongoose.Schema ({
     Description: {type: String, required: true},
     Genre: {
         Name: String,
-        Description: String
+        Description: String,
     },
         Director: {
             Name: String,
-            Bio: String
+            Bio: String,
         }
     });
 
@@ -17,9 +17,11 @@ let movieSchema = mongoose.Schema ({
         Name: {type: String, required: true},
         Email: {type: String, required: true},
         Password: {type: String, required: true},
-        Birthday: Date,
+        Birthday: { type: Date, required: true},
         FavoriteMovies: [{type: mongoose.Schema.Types.ObjectId, ref: 'Movie'}]
     });
+
+   
 
     let Movie = mongoose.model('Movie', movieSchema);
     let User = mongoose.model('User', userSchema);

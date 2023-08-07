@@ -61,14 +61,14 @@
             </td>
             <tr>
                 <td>Return data about a genre</td>
-                <td>/movies/[genre]</td>
+                <td>/movies/[genreName]</td>
                 <td>GET</td>
                 <td>None</td>
                 <td>JSON object holding data about the genre will be returned</td>
             </tr>
             <tr>
             <td>Information about the director of a single movie</td>
-            <td>/movies/director/[director]</td>
+            <td>/movies/directors/[directorName]</td>
             <td>GET</td>
             <td>None</td>
             <td>JSON object holding data about the director of a single movie.  <br>
@@ -82,6 +82,20 @@
 
             </td>
         </tr>
+        <tr>
+            <td>Show all users</td>
+            <td>/users</td>
+            <td>GET</td>
+            <td>A JSON object holding data about all of the registered users</td>
+            <td>A JSON object holding data was added<br>
+            Example: <br>
+        {<br>
+        id: 1 <br>
+        name: Elliott Frey <br>
+        favoriteMovies: 'Harry Potter and the Sorcerer's Stone' <br>
+        }
+    </td>
+            
         </tr>
         <tr>
             <td>Add new users</td>
@@ -100,28 +114,28 @@
         </tr>
         <tr>
             <td>Update user info</td>
-            <td>/users/[id]</td>
+            <td>/users/[Name]</td>
             <td>PUT</td>
             <td>None</td>
             <td>A text message indicating the new user info</td>
         </tr>
         <tr>
             <td>User adds a movie to list of favorites</td>
-            <td>/users/[id]/[title]</td>
+            <td>/users/[Name]</td>
             <td>PUT</td>
             <td>None</td>
             <td>A text message indicating the movie was added to user's list</td>
         </tr>
         <tr>
             <td>Remove a movie from user list</td>
-            <td>/users/[id]/[title]</td>
+            <td>/users/[Name]</td>
             <td>DELETE</td>
             <td>None</td>
             <td>A text message indicating movie was removed from list</td>
         </tr>
         <tr>
             <td>User deregisters</td>
-            <td>/user/[id]</td>
+            <td>/user/[Name]</td>
             <td>DELETE</td>
             <td>None</td>
             <td>A text message indicating the user has succesfully deregisgtered</td>
