@@ -7,6 +7,8 @@ const app = express();
 const mongoose = require("mongoose");
 const Models = require("./models.js");
 const bodyParser = require("body-parser");
+const { check, validationResult } = require('express-validator');
+
 
 
 fs = require("fs"),
@@ -29,6 +31,8 @@ mongoose.connect("mongodb://localhost:27017/[myflixdb]",
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+const cors = require('cors');
+app.use(cors());
 let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
@@ -99,7 +103,22 @@ app.get("/movies/directors/:directorName", passport.authenticate('jwt', { sessio
 });
 
 //Add new users
-app.post('/users', async (req, res) => {
+app.post('/users', 
+[
+  check('Username', 'Username is required').isLength
+({min: 5}),
+check('Username', 'Username contains non alphanumeric characters - not allowed.')
+.isAlphanumeric(),
+check('Password', 'Password is required').not().isEmpty(),
+check('Email', 'Email does not appear to be valid').isEmail()
+],
+async (req, res) => {
+  let errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  let hashedPassword = Users.hashPassword(req.body.Password);
   await Users.findOne({Name: req.body.Name })
   .then((user) => {
     if (user) {
@@ -109,10 +128,8 @@ app.post('/users', async (req, res) => {
       .create ({
         Name: req.body.Name,
         Email: req.body.Email,
-        Password: req.body.Password,
+        Password: hashedPassword,
         Birthday: req.body.Birthday
-       
-       
       })
       .then((user) => {res.status(201).json(user) })
       .catch((error) => {
@@ -233,8 +250,9 @@ app.use(express.static("public"));
 
 
 
-  app.listen(8080, () => {
-    console.log("Your app is listening on port 8080.");
-  });
+ const port = process.env.PORT || 8080;
+ app.listen(port, '0.0.0.0', () => {
+  console.log('Listening on Port ' + port);
+ });
 
   
