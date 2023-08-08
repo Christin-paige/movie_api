@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const Models = require("./models.js");
 const bodyParser = require("body-parser");
 
+
 fs = require("fs"),
 path = require("path")
 app.use(express.json()),
@@ -28,7 +29,11 @@ mongoose.connect("mongodb://localhost:27017/[myflixdb]",
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+let auth = require('./auth')(app);
+const passport = require('passport');
+require('./passport');
 app.use(morgan("common"));
+
 
 // GET requests
 app.get('/', (req, res) => {
@@ -40,7 +45,9 @@ app.get("/documentation", (req, res) => {
 });
 
 //get a list of movie titles
-app.get("/movies", (req, res) => {
+app.get("/movies", passport.authenticate('jwt', { session:
+  false }), (req, res) => {
+    
   Movies.find()
   .then((movies) => {
     res.status(201).json(movies);
@@ -52,7 +59,8 @@ app.get("/movies", (req, res) => {
 });
 
 //Get data about a single movie
-app.get("/movies/:Title", (req, res) => {
+app.get("/movies/:Title", passport.authenticate('jwt', { session:
+  false }),(req, res) => {
   Movies.findOne({ Title: req.params.Title })
   .then ((movie) => {
     res.json(movie);
@@ -64,7 +72,8 @@ app.get("/movies/:Title", (req, res) => {
 });
 
 //return data about a genre
-app.get("/movies/genres/:genreName", (req, res) => {
+app.get("/movies/genres/:genreName", passport.authenticate('jwt', { session:
+  false }), (req, res) => {
    Movies.findOne({ "Genre.Name": req.params.genreName })
   .then ((movie) => {
     res.status(200).json(movie.Genre);
@@ -76,7 +85,8 @@ app.get("/movies/genres/:genreName", (req, res) => {
 });
 
 //information about the director of a single movie/movies
-app.get("/movies/directors/:directorName",  (req,res) => {
+app.get("/movies/directors/:directorName", passport.authenticate('jwt', { session:
+  false }), (req,res) => {
  
   Movies.findOne({ "Director.Name": req.params.directorName })
  .then ((movie) => {
@@ -89,7 +99,7 @@ app.get("/movies/directors/:directorName",  (req,res) => {
 });
 
 //Add new users
-app.post("/users", async (req, res) => {
+app.post('/users', async (req, res) => {
   await Users.findOne({Name: req.body.Name })
   .then((user) => {
     if (user) {
@@ -118,7 +128,8 @@ app.post("/users", async (req, res) => {
 });
 
 //Get all users
-app.get("/users", async (req, res) =>  {
+app.get("/users", passport.authenticate('jwt', { session:
+  false }), async (req, res) =>  {
   await Users.find()
   .then((users) => {
     res.status(201).json(users);
@@ -131,7 +142,8 @@ app.get("/users", async (req, res) =>  {
 
 
 //Get a user by name
-app.get("/users/:Name", async (req, res) => {
+app.get("/users/:Name", passport.authenticate('jwt', { session:
+  false }),async (req, res) => {
   await Users.findOne({ Name: req.params.Name })
   .then((user) => {
     res.json(user);
@@ -143,7 +155,11 @@ app.get("/users/:Name", async (req, res) => {
 });
 
 //update user info, by username
-app.put("/users/:Name", async (req, res) => {
+app.put("/users/:Name", passport.authenticate('jwt', { session:
+  false }), async (req, res) => {
+    if(req.user.Name !== req.params.Username) {
+      return res.status(400).send('Permission denied');
+    }
   await Users.findOneAndUpdate ({ Username: req.params.Name }, 
     { 
       $set: {
@@ -166,7 +182,8 @@ app.put("/users/:Name", async (req, res) => {
 });
 
 //add a movie to a user's list of favorites
-app.post("/users/:Name/movies/:movieID", (req, res) => {
+app.post("/users/:Name/movies/:movieID", passport.authenticate('jwt', { session:
+  false }),(req, res) => {
    const movieID = req.params.movieID;
    if(!mongoose.isValidObjectId(movieID)) {
     return res.status(400).send("Invalid movie ID");
@@ -189,7 +206,8 @@ app.post("/users/:Name/movies/:movieID", (req, res) => {
 });
 
 //Delete user
-app.delete("/users/:Name", (req, res)=> {
+app.delete("/users/:Name", passport.authenticate('jwt', { session:
+  false }),(req, res)=> {
   Users.findOneAndRemove ({ Name: req.params.Name})
   .then((user) => {
     if (!user) {
