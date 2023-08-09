@@ -1,6 +1,5 @@
 const express = require("express");
-
-uuid = require("uuid");
+const uuid = require("uuid");
 
 const morgan = require("morgan");
 const app = express();
@@ -12,7 +11,7 @@ const { check, validationResult } = require('express-validator');
 
 
 fs = require("fs"),
-path = require("path")
+path = require("path"),
 app.use(express.json()),
 app.use(express.urlencoded({
   extended: true
@@ -26,9 +25,10 @@ const Genres = Models.Genre;
 const Directors = Models.Director;
 
 
-mongoose.connect("mongodb://localhost:27017/[myflixdb]",
+mongoose.connect( process.env.CONNECTION_URI,
 { useNewUrlParser: true, useUnifiedTopology: true });
-
+//mongoose.connect("mongodb://localhost:27017/[myflixdb]",
+//{ useNewUrlParser: true, useUnifiedTopology: true });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require('cors');
@@ -255,4 +255,7 @@ app.use(express.static("public"));
   console.log('Listening on Port ' + port);
  });
 
-  
+
+
+
+ //mongoimport --uri mongodb+srv://christinpmartin:mongodb1@myflixdb.orz0dcl.mongodb.net/%5Bmyflixdb%5D --collection users --type json --file users.json
