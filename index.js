@@ -1,8 +1,11 @@
 const express = require("express");
+const cors = require('cors');
 const uuid = require("uuid");
 
 const morgan = require("morgan");
 const app = express();
+
+app.use(cors());
 const mongoose = require("mongoose");
 const Models = require("./models.js");
 const bodyParser = require("body-parser");
@@ -21,23 +24,28 @@ app.use(express.urlencoded({
 
 const Movies = Models.Movie;
 const Users = Models.User;
-const Genres = Models.Genre;
-const Directors = Models.Director;
+//const Genres = Models.Genre;
+//const Directors = Models.Director;
 
 
-mongoose.connect( process.env.CONNECTION_URI,
-{ useNewUrlParser: true, useUnifiedTopology: true });
-//mongoose.connect("mongodb://localhost:27017/[myflixdb]",
-//{ useNewUrlParser: true, useUnifiedTopology: true });
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const cors = require('cors');
-app.use(cors());
 
 let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
-app.use(morgan("common"));
+
+app.use(morgan('common'));
+
+
+
+
+mongoose.connect( 'process.env.CONNECTION_URI',
+  { useNewUrlParser: true, useUnifiedTopology: true });
+  //mongoose.connect("mongodb://localhost:27017/[myflixdb]",
+ // { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 
 // GET requests
@@ -65,7 +73,8 @@ app.get("/movies", passport.authenticate('jwt', { session:
 
 //Get data about a single movie
 app.get("/movies/:Title", passport.authenticate('jwt', { session:
-  false }),(req, res) => {
+  false }),
+  (req, res) => {
   Movies.findOne({ Title: req.params.Title })
   .then ((movie) => {
     res.json(movie);
@@ -106,21 +115,20 @@ app.get("/movies/directors/:directorName", passport.authenticate('jwt', { sessio
 //Add new users
 app.post('/users', 
 [
-  check('Username', 'Username is required').isLength
-({min: 5}),
-check('Username', 'Username contains non alphanumeric characters - not allowed.')
+check('Name', 'Name is required').isLength({min: 5}),
+check('Name', 'Name contains non alphanumeric characters - not allowed.')
 .isAlphanumeric(),
 check('Password', 'Password is required').not().isEmpty(),
 check('Email', 'Email does not appear to be valid').isEmail()
 ],
-async (req, res) => {
+(req, res) => {
   let errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
   let hashedPassword = Users.hashPassword(req.body.Password);
-  await Users.findOne({Name: req.body.Name })
+  Users.findOne({ Name: req.body.Name })
   .then((user) => {
     if (user) {
       return res.status(400).send(req.body.Name + "already exists");
@@ -132,7 +140,7 @@ async (req, res) => {
         Password: hashedPassword,
         Birthday: req.body.Birthday
       })
-      .then((user) => {res.status(201).json(user) })
+      .then((user) => res.status(201).json(user))
       .catch((error) => {
         console.error(error);
         res.status(500).send("Error: " + error);
@@ -260,3 +268,5 @@ app.use(express.static("public"));
 
 
  //mongoimport --uri mongodb+srv://christinpmartin:mongodb1@myflixdb.orz0dcl.mongodb.net/%5Bmyflixdb%5D --collection users --type json --file users.json
+ //mongodump --uri mongodb+srv://christinpmartin:mongodb1@myflixdb.orz0dcl.mongodb.net/%5Bmyflixdb%5D
+ //mongoexport --uri mongodb+srv://christinpmartin:mongodb1@myflixdb.orz0dcl.mongodb.net/%5Bmyflixdb%5D --collection users --type json --out users.json
