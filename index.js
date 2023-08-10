@@ -5,46 +5,35 @@ const uuid = require("uuid");
 const morgan = require("morgan");
 const app = express();
 
-app.use(cors());
+
 const mongoose = require("mongoose");
 const Models = require("./models.js");
 const bodyParser = require("body-parser");
 const { check, validationResult } = require('express-validator');
 
-
-
 fs = require("fs"),
 path = require("path"),
+
+app.use(cors());
 app.use(express.json()),
-app.use(express.urlencoded({
-  extended: true
-}));
-
-
-
-const Movies = Models.Movie;
-const Users = Models.User;
-//const Genres = Models.Genre;
-//const Directors = Models.Director;
-
-
-
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let auth = require('./auth')(app);
+
 const passport = require('passport');
 require('./passport');
-
-app.use(morgan('common'));
-
-
-
+let auth = require('./auth')(app);
 
 mongoose.connect( process.env.CONNECTION_URI,
   { useNewUrlParser: true, useUnifiedTopology: true });
   //mongoose.connect("mongodb://localhost:27017/[myflixdb]",
- // { useNewUrlParser: true, useUnifiedTopology: true });
+  //{ useNewUrlParser: true, useUnifiedTopology: true });
+
+
+const Movies = Models.Movie;
+const Users = Models.User;
 
 
 
@@ -168,8 +157,8 @@ app.get("/users", passport.authenticate('jwt', { session:
 
 
 //Get a user by name
-app.get("/users/:Name", passport.authenticate('jwt', { session:
-  false }),async (req, res) => {
+app.get("/users/:Name", passport.authenticate('jwt', { session:false }),
+async (req, res) => {
   await Users.findOne({ Name: req.params.Name })
   .then((user) => {
     res.json(user);
@@ -181,31 +170,49 @@ app.get("/users/:Name", passport.authenticate('jwt', { session:
 });
 
 //update user info, by username
-app.put("/users/:Name", passport.authenticate('jwt', { session:
-  false }), async (req, res) => {
-    if(req.user.Name !== req.params.Username) {
-      return res.status(400).send('Permission denied');
-    }
-  await Users.findOneAndUpdate ({ Username: req.params.Name }, 
-    { 
+app.put("/users/:Name",  
+[
+  check('Name', 'Name is required').isLength({min: 5}),
+  check('Name', 'Name contains non alphanumeric characters - not allowed.')
+  .isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+  check('Email', 'Email does not appear to be valid').isEmail()
+  ],
+    passport.authenticate('jwt', { session: false }),
+       async (req, res) => { let errors = validationResult(req);
+
+          if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+          }
+          let hashedPassword = Users.hashPassword(req.body.Password);
+          Users.findOneAndUpdate(
+            { Name: req.params.Name },
+            {
       $set: {
-  Name: req.body.Username,
-  Password: req.body.Password,
+  Name: req.body.Name,
+  Password: hashedPassword,
   Email: req.body.Email,
   Birthday: req.body.Birthday,
-  FavoriteMovies: req.body.FavoriteMovies
 
-}
 },
-{ new: true }  )
+},
+{ new: true } 
+ )
 .then((updatedUser) => {
-  res.json(updatedUser);
+  if(!updatedUser) {
+    return rest.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json(updatedUser);
 })
 .catch((err) => {
   console.error(err);
   res.status(500).send("Error: " + err);
-})
 });
+}
+);
+
+
 
 //add a movie to a user's list of favorites
 app.post("/users/:Name/movies/:movieID", passport.authenticate('jwt', { session:
