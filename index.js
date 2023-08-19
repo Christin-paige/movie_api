@@ -47,8 +47,7 @@ app.get('/documentation', (req, res) => {
 });
 
 //get a list of movie titles
-app.get('/movies', passport.authenticate('jwt', { session:
-  false }), (req, res) => {
+app.get('/movies', (req, res) => {
     
   Movies.find()
   .then((movies) => {
@@ -143,8 +142,8 @@ check('Email', 'Email does not appear to be valid').isEmail()
 });
 
 //Get all users
-app.get('/users', passport.authenticate('jwt', { session:
-  false }), async (req, res) =>  {
+app.get('/users', passport.authenticate('jwt', { session:false }),
+async (req, res) =>  {
   await Users.find()
   .then((users) => {
     res.status(201).json(users);
