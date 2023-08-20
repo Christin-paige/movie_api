@@ -214,8 +214,7 @@ app.put('/users/:Name',
 
 
 //add a movie to a user's list of favorites
-app.post('/users/:Name/movies/:movieID', passport.authenticate('jwt', { session:
-  false }),(req, res) => {
+app.post('/users/:Name/movies/:movieID', (req, res) => {
    const movieID = req.params.movieID;
    if(!mongoose.isValidObjectId(movieID)) {
     return res.status(400).send('Invalid movie ID');
