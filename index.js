@@ -39,7 +39,7 @@ const Users = Models.User;
 
 // GET requests
 app.get('/', (req, res) => {
-  res.send('MyFlix: All of the Movies Worth Caring About');
+  res.send('MyFilms: All of the Movies Worth Caring About');
 });
 
 app.get('/documentation', (req, res) => {                  
