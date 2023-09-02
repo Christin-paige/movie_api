@@ -21,15 +21,15 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
+let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
-let auth = require('./auth')(app);
+
 
 mongoose.connect( process.env.CONNECTION_URI,
   { useNewUrlParser: true, useUnifiedTopology: true });
-  //mongoose.connect("mongodb://localhost:27017/[myflixdb]",
-  //{ useNewUrlParser: true, useUnifiedTopology: true });
+ // mongoose.connect("mongodb://localhost:27017/[myflixdb]",
+ // { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 const Movies = Models.Movie;
@@ -47,7 +47,9 @@ app.get('/documentation', (req, res) => {
 });
 
 //get a list of movie titles
-app.get('/movies', (req, res) => {
+app.get('/movies',
+passport.authenticate('jwt', { session: false }),
+ (req, res) => {
     
   Movies.find()
   .then((movies) => {
@@ -60,8 +62,8 @@ app.get('/movies', (req, res) => {
 });
 
 //Get data about a single movie
-app.get('/movies/:Title', passport.authenticate('jwt', { session:
-  false }),
+app.get('/movies/:Title', 
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
   Movies.findOne({ Title: req.params.Title })
   .then ((movie) => {
@@ -142,9 +144,10 @@ check('Email', 'Email does not appear to be valid').isEmail()
 });
 
 //Get all users
-app.get('/users', passport.authenticate('jwt', { session:false }),
-async (req, res) =>  {
-  await Users.find()
+app.get('/users',
+passport.authenticate('jwt', { session:false }),
+ (req, res) =>  {
+   Users.find()
   .then((users) => {
     res.status(201).json(users);
   })
@@ -156,7 +159,8 @@ async (req, res) =>  {
 
 
 //Get a user by name
-app.get('/users/:Name', passport.authenticate('jwt', { session:false }),
+app.get('/users/:Name', 
+passport.authenticate('jwt', { session:false }),
 async (req, res) => {
   await Users.findOne({ Name: req.params.Name })
   .then((user) => {
