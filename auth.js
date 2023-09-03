@@ -13,12 +13,8 @@ let generateJWTToken = (user) => {
     });
 }
 
-router.get('/login', (req, res)=> {
-    res.render('login');
-});
-
 //POST login
-//module.exports = (router) => {
+module.exports = (router) => {
     router.post('/login', (req, res) => {
        passport.authenticate('local', { session: false },
         (error, user, info) => {
@@ -35,7 +31,12 @@ router.get('/login', (req, res)=> {
                let token = generateJWTToken(user.toJSON());
                 return res.json({ user, token });
             });
-        })(req, res);
+        }) (req, res);
     });
 
-module.exports = router;
+    router.get('/login', (req, res)=> {
+        res.send('POST request to /login');
+    })
+}
+
+
