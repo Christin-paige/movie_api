@@ -217,15 +217,15 @@ app.put('/users/:Name',
 
 
 //add a movie to a user's list of favorites
-app.post('/users/:Name/movies/:movieID', (req, res) => {
-   const movieID = req.params.movieID;
-   if(!mongoose.isValidObjectId(movieID)) {
+app.post('/users/:Name/movies/:MovieID', (req, res) => {
+   const MovieID = req.params.MovieID;
+   if(!mongoose.isValidObjectId(MovieID)) {
     return res.status(400).send('Invalid movie ID');
    }
    Users.findOneAndUpdate(
     {Name: req.params.Name },
    
-    { $push: { FavoriteMovies: movieID } },
+    { $push: { FavoriteMovies: req.params.MovieID } },
    { new: true }) // This line makes sure that the updated document is returned
   .then((updatedUser) => {
     if (!updatedUser) {
@@ -255,6 +255,24 @@ app.delete('/users/:Name', passport.authenticate('jwt', { session:
     console.error(err);
     res.status(500).send('Error: ' + err);
   });
+});
+
+//Delete movie from user's favorites
+app.delete ('/users/:Name/movies/:MovieID', passport.authenticate('jwt', { session:
+  false }),(req, res)=> {
+ 
+  Users.findOneAndUpdate(
+   {Name: req.params.Name },
+   { $pull: { FavoriteMovies: req.params.MovieID } },
+  { new: true }) // This line makes sure that the updated document is returned
+ .then((updatedUser) => {
+  
+   res.json(updatedUser);
+ })
+ .catch((err) => {
+   console.error(err);
+   res.status(500).send('Error: ' + err);
+ });
 });
 
 
