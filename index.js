@@ -222,8 +222,8 @@ app.post('/users/:Name/movies/:MovieID', (req, res) => {
    if(!mongoose.isValidObjectId(MovieID)) {
     return res.status(400).send('Invalid movie ID');
    }
-   Users.findOneAndUpdate(
-    {Name: req.params.Name },
+   Users.findOneAndUpdate (
+    { Name: req.params.Name },
    
     { $push: { FavoriteMovies: req.params.MovieID } },
    { new: true }) // This line makes sure that the updated document is returned
@@ -258,21 +258,27 @@ app.delete('/users/:Name', passport.authenticate('jwt', { session:
 });
 
 //Delete movie from user's favorites
-app.delete ('/users/:Name/movies/:MovieID', passport.authenticate('jwt', { session:
-  false }),(req, res)=> {
-   
-  Users.findOneAndUpdate(
+app.delete('/users/:Name/movies/:MovieID',
+ // passport.authenticate('jwt', { session: false }),
+   async (req, res) => {
+   await Users.findOneAndUpdate (
     { Name: req.params.Name },
    { $pull: { FavoriteMovies: req.params.MovieID } },
   { new: true }) // This line makes sure that the updated document is returned
- .then((updatedUser) => { res.status(200).json(updatedUser);
+ .then((updatedUser) => { 
+  if (!updatedUser) {
+    return res.status(400).send('User not found');
+  }else {
+    res.status(200).send(req.params.Name + ' was deleted.');
+  }
+  res.json(updatedUser);
+  
   })
  .catch((err) => {
    console.error(err);
    res.status(500).send('Error: ' + err);
  });
-}
-);
+});
 
 
 
