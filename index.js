@@ -267,11 +267,9 @@ app.delete('/users/:Name/movies/:MovieID',
  .then((updatedUser) => { 
   if (!updatedUser) {
     return res.status(400).send('User not found');
-  }else {
-    res.status(200).send(req.params.Name);
+  } else {
+    res.status(200).json(updatedUser);
   }
-  res.json(updatedUser);
-  
   })
  .catch((err) => {
    console.error(err);
