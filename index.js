@@ -298,6 +298,4 @@ app.use(express.static('public'));
 
 
 
- //mongoimport --uri mongodb+srv://christinpmartin:mongodb1@myflixdb.orz0dcl.mongodb.net/%5Bmyflixdb%5D --collection users --type json --file users.json
- //mongodump --uri mongodb+srv://christinpmartin:mongodb1@myflixdb.orz0dcl.mongodb.net/%5Bmyflixdb%5D
- //mongoexport --uri mongodb+srv://christinpmartin:mongodb1@myflixdb.orz0dcl.mongodb.net/%5Bmyflixdb%5D --collection users --type json --out users.json
+ 
