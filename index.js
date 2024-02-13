@@ -34,18 +34,38 @@ mongoose.connect( process.env.CONNECTION_URI,
 const Movies = Models.Movie;
 const Users = Models.User;
 
-
-
 // GET requests
+
+/**
+ * @description
+ * Responds with a welcome message for the MyFilms application.
+ * This is not an authenticated route.
+ * @route GET /
+ */
+
 app.get('/', (req, res) => {
   res.send('MyFilms: All of the Movies Worth Caring About');
 });
+
+/**
+ * @description
+ * Serves the documentation HTML file.
+ * This is not an authenticated route.
+ * @route GET /documentation
+ */
 
 app.get('/documentation', (req, res) => {                  
   res.sendFile('public/documentation.html', { root: __dirname });
 });
 
-//get a list of movie titles
+/**
+ * @description
+ * Retrieves a list of all movies in the database.
+ * This route requires JWT authentication.
+ * @route GET /movies
+ * @authenticated
+ */
+
 app.get('/movies',  passport.authenticate('jwt', { session: false }),
 (req, res) => {
   
@@ -59,7 +79,15 @@ app.get('/movies',  passport.authenticate('jwt', { session: false }),
   });
 });
 
-//Get data about a single movie
+/**
+ * @description
+ * Retrieves information about a specific movie by title.
+ * This route requires JWT authentication.
+ * @route GET /movies/:Title
+ * @authenticated
+ * @param {string} Title - The title of the movie to retrieve.
+ */
+
 app.get('/movies/:Title', 
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
@@ -73,7 +101,15 @@ app.get('/movies/:Title',
   });
 });
 
-//return data about a genre
+/**
+ * @description
+ * Retrieves information about a specific genre.
+ * This route requires JWT authentication.
+ * @route GET /movies/genres/:genreName
+ * @authenticated
+ * @param {string} genreName - The name of the genre to retrieve.
+ */
+
 app.get('/movies/genres/:genreName', passport.authenticate('jwt', { session:
   false }), (req, res) => {
    Movies.findOne({ 'Genre.Name': req.params.genreName })
@@ -86,10 +122,18 @@ app.get('/movies/genres/:genreName', passport.authenticate('jwt', { session:
   });
 });
 
-//information about the director of a single movie/movies
+/**
+ * @description
+
+ * Retrieves information about a director in a movie.
+ * This route requires JWT authentication.
+ * @route GET /movies/directors/:directorName
+ * @authenticated
+ * @param {string} directorName - The name of the director to retrieve.
+ */
+
 app.get('/movies/directors/:directorName', passport.authenticate('jwt', { session:
   false }), (req,res) => {
- 
   Movies.findOne({ 'Director.Name': req.params.directorName })
  .then ((movie) => {
    res.status(200).json(movie.Director);
@@ -100,7 +144,19 @@ app.get('/movies/directors/:directorName', passport.authenticate('jwt', { sessio
  });
 });
 
-//Add new users
+// POST requests
+
+/**
+ * @description
+ * Creates a new user account.
+ * This route does not require authentication.
+ * @route POST /users
+ * @param {string} Name - The username of the new user.
+ * @param {string} Email - The email address of the new user.
+ * @param {string} Password - The password of the new user.
+ * @param {Date} Birthday - The birthday of the new user (optional).
+ */
+
 app.post('/users', 
 [
 check('Name', 'Name is required').isLength({min: 5}),
@@ -141,7 +197,16 @@ check('Email', 'Email does not appear to be valid').isEmail()
   })
 });
 
-//Get all users
+// GET requests (continued)
+
+/**
+ * @description
+ * Retrieves a list of all users.
+ * This route requires JWT authentication.
+ * @route GET /users
+ * @authenticated
+ */
+
 app.get('/users',
 passport.authenticate('jwt', { session:false }),
  (req, res) =>  {
@@ -155,8 +220,15 @@ passport.authenticate('jwt', { session:false }),
   });
 });
 
+/**
+ * @description
+ * Retrieves information about a specific user by username.
+ * This route requires JWT authentication.
+ * @route GET /users/:Name
+ * @authenticated
+ * @param {string} Name - The username of the user to retrieve.
+ */
 
-//Get a user by name
 app.get('/users/:Name', 
 passport.authenticate('jwt', { session:false }),
 async (req, res) => {
@@ -170,7 +242,18 @@ async (req, res) => {
   });
 });
 
-//update user info, by username
+// PUT requests
+
+/**
+ * @description
+ * Updates the information of a user.
+ * This route requires JWT authentication.
+ * @route PUT /users/:Name
+ * @authenticated
+ * @param {string} Name - The username of the user to update.
+ * @body {object} - User data to update (similar to POST /users)
+ */
+
 app.put('/users/:Name',  
 [
   check('Name', 'Name is required').isLength({min: 5}),
@@ -213,9 +296,17 @@ app.put('/users/:Name',
 }
 );
 
+/**
+ * @description
+ * Adds a movie to a user's list of favorites.
+ * This route requires JWT authentication.
+ * @route POST /users/:Name/movies/:MovieID
+ * @authenticated
+ * @param {string} Name - The username of the user whose favorites list to update.
+ * @param {string} MovieID - The ID of the movie to add to the favorites list.
+ * @returns {object} The updated user object with the added movie in the favorites list.
+ */
 
-
-//add a movie to a user's list of favorites
 app.post('/users/:Name/movies/:MovieID', (req, res) => {
    const MovieID = req.params.MovieID;
    if(!mongoose.isValidObjectId(MovieID)) {
@@ -238,7 +329,16 @@ app.post('/users/:Name/movies/:MovieID', (req, res) => {
   });
 });
 
-//Delete user
+/**
+ * @description
+ * Deletes a user account.
+ * Requires JWT authentication.
+ * @route DELETE /users/:Name
+ * @authenticated
+ * @param {string} Name - The username of the user to delete.
+ * @returns {string} A success message if the user was deleted, or an error message if not found.
+ */
+
 app.delete('/users/:Name', passport.authenticate('jwt', { session:
   false }),(req, res)=> {
   Users.findOneAndRemove ({ Name: req.params.Name})
@@ -256,14 +356,21 @@ app.delete('/users/:Name', passport.authenticate('jwt', { session:
   });
 });
 
-//Delete movie from user's favorites
-app.delete('/users/:Name/movies/:MovieID',
- // passport.authenticate('jwt', { session: false }),
+/**
+ * @description
+ * Deletes a movie from a user's favorites list.
+ * Does not require authentication.
+ * @route DELETE /users/:Name/movies/:MovieID
+ * @param {string} Name - The username of the user whose favorites list to update.
+ * @param {string} MovieID - The ID of the movie to remove from the favorites list.
+ * @returns {object} The updated user object with the movie removed from the favorites list, or a 400 error if the user is not found.
+ */
+app.delete('/users/:Name/movies/:MovieID',                                                 
     (req, res) => {
     Users.findOneAndUpdate (
     { Name: req.params.Name },
-   { $pull: { FavoriteMovies: req.params.MovieID } },
-  { new: true }) // This line makes sure that the updated document is returned
+    { $pull: { FavoriteMovies: req.params.MovieID } },
+    { new: true })                                       // ensures updated document is returned
  .then((updatedUser) => { 
   if (!updatedUser) {
     return res.status(400).send('User not found');

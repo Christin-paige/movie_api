@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+/**
+ * @description of the movie schema
+ */
 let movieSchema = mongoose.Schema ({
     Title: {type: String, required: true},
     Description: {type: String, required: true},
@@ -13,7 +16,9 @@ let movieSchema = mongoose.Schema ({
             Bio: String,
         }
     });
-
+/**
+ * @description of the  user schema
+ */
     let userSchema = mongoose.Schema ({
         Name: {type: String, required: true},
         Email: {type: String, required: true},
